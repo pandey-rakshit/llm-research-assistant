@@ -4,6 +4,7 @@ from config import settings
 from langchain_core.documents import Document
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from core.pdf_parser import PDFSectionParser
 
 class DocumentProcessor:
     
@@ -24,7 +25,7 @@ class DocumentProcessor:
         path = Path(file_path)
         extension = path.suffix.lower()
 
-        if extension == 'pdf':
+        if extension == '.pdf':
             loader = PyPDFLoader(file_path)
         else:
             raise ValueError(f"Unsupported file {extension} extention. Use .pdf file")
@@ -38,9 +39,14 @@ class DocumentProcessor:
 
     def split_document(self, documents: List[Document] = None) -> List[Document]:
         return self.text_splitter.split_documents(documents)
+    
+    def preprocess_documents(self, documents: List[Document]) -> List[Document]:
+        parser = PDFSectionParser()
+        return parser.parse(documents)
 
     def process(self, file_path: str = None):
         documents = self.load_document(file_path)
         metadata = self.load_metadata(documents)
+        documents, sections = self.preprocess_documents(documents)
         chunks = self.split_document(documents)
-        return chunks, metadata
+        return chunks, metadata, sections

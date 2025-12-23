@@ -20,17 +20,17 @@ class VectorStoreManager:
     def is_initialized(self) -> bool:
         return self._vector_store is not None
 
-    def create_from_document(self, documents: List[Document]) -> FAISS:
-        self.vector_store = FAISS.from_documents(
+    def create_from_documents(self, documents: List[Document]) -> FAISS:
+        self._vector_store = FAISS.from_documents(
             documents=documents,
             embedding=self.embedding_manager.embeddings
         )
 
-        return self.vector_store
+        return self._vector_store
 
     def add_documents(self, documents: List[Document]) -> None:
         if not self.is_initialized:
-            self.create_from_document(documents)
+            self.create_from_documents(documents)
         else:
             self._vector_store.add_documents(documents)
 
