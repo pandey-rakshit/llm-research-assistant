@@ -38,9 +38,6 @@ class AppSettings:
     # API Keys
     GROQ_API_KEY: str = _validate_env("GROQ_API_KEY")
 
-    # Tavily
-    TAVILY_API_KEY: str = _validate_env("TAVILY_API_KEY")
-
     # Safety
     ALLOW_TOOLS: bool = False
 
