@@ -23,7 +23,6 @@ class DocumentIngestionPipeline:
         chunks: List[DocumentChunk] = []
 
         metadata = documents[0].metadata if documents else {}
-        pprint.pprint(metadata, indent=4)
 
         for doc in documents:
             sections = self.extractor.extract(doc)

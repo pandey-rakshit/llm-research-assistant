@@ -51,33 +51,6 @@ render_sidebar(st.session_state.orchestrator, st.session_state.document_metadata
 
 
 # -------------------------------------------------
-# Upload / Manage Documents (PASSIVE)
-# -------------------------------------------------
-with st.expander("📄 Upload / Manage Documents", expanded=True):
-    uploaded_file = st.file_uploader(
-        "Upload research paper (PDF)",
-        type=["pdf"],
-        key="file_uploader",
-    )
-
-    if uploaded_file:
-        # passive selection only
-        st.session_state.selected_file = uploaded_file
-        st.info(f"Selected file: **{uploaded_file.name}**")
-
-    # Show process button only when a file is selected
-    if st.session_state.selected_file:
-        filename = st.session_state.selected_file.name
-
-        if filename not in st.session_state.processed_files:
-            if st.button("📄 Process Document", type="primary"):
-                st.session_state.is_processing = True
-                st.rerun()
-        else:
-            st.success("Document already processed")
-
-
-# -------------------------------------------------
 # Actual processing (SINGLE SOURCE OF TRUTH)
 # -------------------------------------------------
 if st.session_state.is_processing and st.session_state.selected_file:
@@ -100,15 +73,47 @@ if st.session_state.is_processing and st.session_state.selected_file:
     if st.session_state.selected_file.name != st.session_state.uploaded_files:
         st.session_state.uploaded_files = st.session_state.selected_file.name
 
+    
     st.session_state.is_processing = False
     st.success("Document processed successfully")
     st.rerun()
 
 
+
 # -------------------------------------------------
 # Chat input
 # -------------------------------------------------
-if not st.session_state.processed_files:
-    st.warning("Upload and process a document to start chatting.")
-else:
+if st.session_state.processed_files:
     chat_ui(st.session_state.rag_chain)
+else:
+    st.warning("Upload and process a document to start chatting.")
+
+
+# -------------------------------------------------
+# Upload / Manage Documents (PASSIVE)
+# -------------------------------------------------
+with st.expander(
+    "📄 Upload / Manage Documents",
+    expanded=not bool(st.session_state.processed_files)
+):
+    uploaded_file = st.file_uploader(
+        "Upload research paper (PDF)",
+        type=["pdf"],
+        key="file_uploader",
+    )
+
+    if uploaded_file:
+        # passive selection only
+        st.session_state.selected_file = uploaded_file
+        st.info(f"Selected file: **{uploaded_file.name}**")
+
+    # Show process button only when a file is selected
+    if st.session_state.selected_file:
+        filename = st.session_state.selected_file.name
+
+        if filename not in st.session_state.processed_files:
+            if st.button("📄 Process Document", type="primary"):
+                st.session_state.is_processing = True
+                st.rerun()
+        else:
+            st.success("Document already processed")

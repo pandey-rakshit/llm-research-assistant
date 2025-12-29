@@ -27,7 +27,7 @@ class DocumentChunker:
                         metadata={
                             **section.metadata,
                             "section": section.section_name,
-                            "index": idx,
+                            "chunk_index": idx,
                         },
                     )
                 )
