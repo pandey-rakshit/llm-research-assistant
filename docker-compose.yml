@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8010:8010"
+    env_file:
+      - .env
+    volumes:
+      - uploads:/app/data/uploads
+      - faiss:/app/data/faiss
+    restart: unless-stopped
+
+volumes:
+  uploads:
+  faiss:
